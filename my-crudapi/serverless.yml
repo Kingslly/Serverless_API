@@ -1,0 +1,57 @@
+service: my-crudapi
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: dev
+  region: us-east-1
+
+functions:
+  createEmployee:
+    handler: handler.create_employee
+    events:
+      - http:
+          path: employees
+          method: post
+          cors: true
+
+  getEmployee:
+    handler: handler.get_employee
+    events:
+      - http:
+          path: employees/{id}
+          method: get
+          cors: true
+
+  updateEmployee:
+    handler: handler.update_employee
+    events:
+      - http:
+          path: employees/{id}
+          method: put
+          cors: true
+
+  deleteEmployee:
+    handler: handler.delete_employee
+    events:
+      - http:
+          path: employees/{id}
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    EmployeeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: employeeTable
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: N
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
